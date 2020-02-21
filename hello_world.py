@@ -27,7 +27,11 @@ def setNonBlocking(fd):
     fcntl.fcntl(fd, fcntl.F_SETFL, flags)
 
 def new_process():
-    return subprocess.Popen(['/Users/richard/work/cockroach-v19.2.2.darwin-10.9-amd64/cockroach','demo','movr'], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
+    s = subprocess.Popen(['cockroach','demo'], stdout=subprocess.PIPE, stdin=subprocess.PIPE, stderr=subprocess.STDOUT)
+    s.stdin.write(b"\set errexit false" + b"\n")
+    s.stdin.flush()
+    return s
+
 
 @app.route('/new_client')
 @cross_origin(origin='localhost',headers=['Content- Type','Authorization'])
@@ -46,25 +50,24 @@ def send_input(key):
     cmd = request.get_data()
     print("CMD IS "+str(cmd, 'utf-8'))
 
-    
     process = Clients[key]
-    
+
     process.stdout.flush()
-    
+
     setNonBlocking(process.stdin)
     setNonBlocking(process.stdout)
-    
+
     process.stdin.write(cmd + b"\n")
     process.stdin.flush()
     time.sleep(0.25)
-    
+
     output = process.stdout.read()
-    
+
     if not output:
         return "err"
-    
+
     return output
-    
+
 def gc():
     for key in Clients:
         if (datetetime.now()-Times[key]).total_seconds() > 20*60:
