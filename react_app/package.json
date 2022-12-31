@@ -9,7 +9,7 @@
     "react": "^16.12.0",
     "react-dom": "^16.12.0",
     "react-icons-kit": "^1.1.6",
-    "react-scripts": "1.1.4",
+    "react-scripts": "5.0.1",
     "react-scroll": "^1.7.16",
     "reactstrap": "^8.4.1",
     "slate": "^0.34.5",
